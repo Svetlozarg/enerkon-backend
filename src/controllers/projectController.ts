@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import Project, { ProjectModel } from "../models/projectModel";
+import Project, { ProjectModel } from "../models/ProjectModel";
 import Document, { DocumentModel } from "../models/DocumentModel";
 import ProjectLog, { ProjectLogModel } from "../models/ProjectLogModel";
 

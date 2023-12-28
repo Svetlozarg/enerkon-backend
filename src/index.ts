@@ -1,14 +1,11 @@
 import { config } from "dotenv";
 config();
-import express, {
-  ErrorRequestHandler,
-  NextFunction,
-  Request,
-  Response,
-} from "express";
+import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes";
+
+// // https://dev.to/tirthpatel/deploy-node-ts-express-typescript-on-vercel-284h
 
 const PORT = process.env.PORT || 5000;
 
