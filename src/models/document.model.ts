@@ -1,32 +1,35 @@
-import mongoose from "mongoose";
+import { Document as MongooseDocument, Schema, model, models } from "mongoose";
 
-export interface DocumentModel {
+export interface IDocument extends MongooseDocument {
+  _id: string;
   title: string;
-  project: mongoose.Schema.Types.ObjectId;
+  project: string;
   size: number;
   type: string;
   status: "In process" | "Canceled" | "Finished";
   default: boolean;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const documentSchema = new mongoose.Schema<DocumentModel>(
+const documentSchema = new Schema(
   {
     title: {
       type: String,
-      required: [true, "Title field is required"],
+      required: true,
     },
     project: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: Schema.Types.ObjectId,
       ref: "Project",
-      required: [true, "Project is required"],
+      required: true,
     },
     size: {
       type: Number,
-      required: [true, "Size field is required"],
+      required: true,
     },
     type: {
       type: String,
-      required: [true, "Type is required"],
+      required: true,
     },
     status: {
       type: String,
@@ -41,4 +44,7 @@ const documentSchema = new mongoose.Schema<DocumentModel>(
   { timestamps: true }
 );
 
-export default mongoose.model("Document", documentSchema);
+const Document =
+  models.Document || model<IDocument>("Document", documentSchema);
+
+export default Document;

@@ -2,7 +2,7 @@ import asyncHandler from "express-async-handler";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import { NextFunction, Request, Response } from "express";
-import User from "../models/UserModel";
+import User from "../models/user.model";
 
 //@desc Register a user
 //!@route POST /api/users/register

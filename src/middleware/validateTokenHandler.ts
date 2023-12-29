@@ -4,27 +4,25 @@ import { Request, Response, NextFunction } from "express";
 
 export const validateToken = asyncHandler(
   async (req: Request, res: Response, next: NextFunction) => {
-    let token: string | undefined;
-    let authHeader = req.headers.Authorization || req.headers.authorization;
-    if (typeof authHeader === "string" && authHeader.startsWith("Bearer")) {
-      token = (authHeader as string).split(" ")[1];
-      jwt.verify(
-        token,
-        process.env.ACCESS_TOKEN_SECRET as string,
-        (err, decoded) => {
-          if (err) {
-            res.status(401);
-            throw new Error("User is not authorized");
-          }
-          (req as any).user = (decoded as JwtPayload)?.user;
-          next();
-        }
-      );
+    const authHeader = req.headers.authorization;
 
-      if (!token) {
-        res.status(401);
-        throw new Error("User is not authorized or token is missing");
-      }
+    if (!authHeader || !authHeader.startsWith("Bearer")) {
+      res.status(401);
+      throw new Error("User is not authorized or token is missing");
     }
+
+    const token = authHeader.split(" ")[1];
+
+    if (!token) {
+      res.status(401);
+      throw new Error("User is not authorized or token is missing");
+    }
+
+    const decoded = jwt.verify(
+      token,
+      process.env.ACCESS_TOKEN_SECERT
+    ) as JwtPayload;
+    (req as any).user = decoded.user;
+    next();
   }
 );

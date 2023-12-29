@@ -1,26 +1,28 @@
-import mongoose from "mongoose";
 import { Request, Response } from "express";
 import asyncHandler from "express-async-handler";
-import Project, { ProjectModel } from "../models/ProjectModel";
-import Document, { DocumentModel } from "../models/DocumentModel";
-import ProjectLog, { ProjectLogModel } from "../models/ProjectLogModel";
+import Project from "../models/project.model";
+import Document from "../models/document.model";
+import ProjectLog from "../models/projectlog.model";
+import { deleteProjectLog, updateProjectLog } from "../helpers/logHelpers";
+import { Types } from "mongoose";
+import { error, info } from "../helpers/logger";
 
 //@desc Get all projects
 //?@route GET /api/project/projects
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const projects: ProjectModel[] = await Project.find();
+    const projects = await Project.find();
     res.status(200).json({ success: true, data: projects });
   }
 );
 
-//@desc Get project by id
+//@desc Get a project by ID
 //?@route GET /api/project/:id
 //@access private
 export const getProjectById = asyncHandler(
   async (req: Request, res: Response) => {
-    const project: ProjectModel | null = await Project.findById(req.params.id);
+    const project = await Project.findById(req.params.id);
     if (project) {
       res.status(200).json({ success: true, data: project });
     } else {
@@ -35,14 +37,16 @@ export const getProjectById = asyncHandler(
 //@access private
 export const getProjectDocuments = asyncHandler(
   async (req: Request, res: Response) => {
-    const project: ProjectModel | null = await Project.findById(req.params.id);
+    const projectId = req.params.id;
+    const project = await Project.findById(projectId);
+
     if (!project) {
       res.status(404);
       throw new Error("Project not found");
     }
-    const documents: DocumentModel[] = await Document.find({
-      project: new mongoose.Types.ObjectId(req.params.id),
-    });
+
+    const documents = await Document.find({ project: projectId });
+
     res.status(200).json({ success: true, data: documents });
   }
 );
@@ -52,9 +56,7 @@ export const getProjectDocuments = asyncHandler(
 //@access private
 export const getProjectLog = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectLogs: ProjectLogModel[] = await ProjectLog.find({
-      id: req.params.id,
-    });
+    const projectLogs = await ProjectLog.find({ id: req.params.id });
     if (!projectLogs) {
       res.status(404);
       throw new Error("Project log not found");
@@ -103,6 +105,112 @@ export const getProjectsAnalytics = asyncHandler(
         paid: paidArray,
         unpaid: unpaidArray,
       },
+    });
+  }
+);
+
+//@desc Create a project
+//!@route POST /api/project/create
+//@access private
+export const createProject = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { title, owner } = req.body;
+
+    const project = new Project({
+      title,
+      owner,
+    });
+
+    const createdProject = await project.save();
+
+    if (!createdProject) {
+      res.status(400);
+      error("Invalid project data");
+      throw new Error("Invalid project data");
+    }
+
+    updateProjectLog(
+      new Types.ObjectId(createdProject._id),
+      createdProject.title,
+      "Проектът е създаден",
+      createdProject.createdAt
+    );
+
+    info("Project created successfully");
+
+    res.status(201).json({ success: true, data: createdProject });
+  }
+);
+
+//@desc Update a project
+//!@route PUT /api/project/update/:id
+//@access private
+export const updateProject = asyncHandler(
+  async (req: Request, res: Response) => {
+    const projectId = req.params.id;
+    const updatedData = req.body;
+
+    const updatedProject = await Project.findByIdAndUpdate(
+      projectId,
+      updatedData,
+      { new: true }
+    );
+
+    let logMessage = "";
+
+    if (updatedData.title && updatedData.status) {
+      logMessage = "Заглавието и статуса са променени";
+    } else if (updatedData.title) {
+      logMessage = "Заглавието на проекта е променено";
+    } else if (updatedData.status) {
+      logMessage = "Статусът на проекта е променен";
+    } else if (updatedData.favourite) {
+      logMessage = "Проектът е добавен в любими";
+    } else {
+      logMessage = "Проектът е премахнат от любими";
+    }
+
+    if (!updatedProject) {
+      res.status(404);
+      error("Project not found and cannot be updated");
+      throw new Error("Project not found");
+    }
+
+    updateProjectLog(
+      new Types.ObjectId(projectId),
+      updatedProject.title,
+      logMessage,
+      updatedProject.updatedAt
+    );
+
+    info("Project updated successfully");
+
+    res.status(200).json({ success: true, data: updatedProject });
+  }
+);
+
+//@desc Delete a project
+//!@route DELETE /api/project/delete
+//@access private
+export const deleteProject = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { id } = req.body;
+
+    const deletedProject = await Project.findByIdAndDelete(id);
+
+    if (!deletedProject) {
+      res.status(404);
+      error("Project not found and cannot be deleted");
+      throw new Error("Project not found");
+    }
+
+    deleteProjectLog(id);
+
+    info("Project deleted successfully");
+
+    res.json({
+      success: true,
+      message: "Project deleted successfully",
     });
   }
 );
