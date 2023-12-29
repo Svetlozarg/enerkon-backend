@@ -15,26 +15,27 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDocumentPreviewLink = exports.deleteFileFromDrive = exports.downloadFileFromDrive = exports.uploadFileToDrive = void 0;
 const googleapis_1 = require("googleapis");
 const fs_1 = __importDefault(require("fs"));
-const fileHelpers_1 = require("../fileHelpers");
+const logger_1 = require("../logger");
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 const authorize = () => __awaiter(void 0, void 0, void 0, function* () {
     const jwtClient = new googleapis_1.google.auth.JWT(process.env.GOOGLE_CLIENT_EMAIL, null, process.env.GOOGLE_PRIVATE_KEY, SCOPE);
     yield jwtClient.authorize();
     return jwtClient;
 });
-const uploadFile = (authClient, filePath) => {
+const uploadFile = (authClient, file, filename, mimeType) => {
     return new Promise((resolve, rejected) => {
-        const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
-        const fileExtension = filePath.split(".").pop();
-        const mimeType = (0, fileHelpers_1.getFileMimeType)(fileExtension);
+        const drive = googleapis_1.google.drive({
+            version: "v3",
+            auth: authClient,
+        });
         const fileMetaData = {
-            name: (0, fileHelpers_1.getFileName)(filePath),
+            name: filename,
             parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
         };
         drive.files.create({
             requestBody: fileMetaData,
             media: {
-                body: fs_1.default.createReadStream(filePath),
+                body: file,
                 mimeType: mimeType,
             },
             fields: "id",
@@ -46,22 +47,25 @@ const uploadFile = (authClient, filePath) => {
         });
     });
 };
-const uploadFileToDrive = (filePath) => __awaiter(void 0, void 0, void 0, function* () {
+const uploadFileToDrive = (file, filename, mimeType) => __awaiter(void 0, void 0, void 0, function* () {
     try {
         const authClient = yield authorize();
-        const file = yield uploadFile(authClient, filePath);
-        if (!file) {
+        const uploadedFile = yield uploadFile(authClient, file, filename, mimeType);
+        if (!uploadedFile) {
+            (0, logger_1.error)(`There was a problem uploading ${filename}`);
             throw new Error("Error while uploading file");
         }
         else {
-            console.log("%cFile uploaded successfully", "background-color: green");
+            (0, logger_1.info)(`File ${filename} uploaded successfully`);
         }
     }
-    catch (error) {
-        console.log(error);
+    catch (er) {
+        (0, logger_1.error)(er);
+        throw new Error(er);
     }
 });
 exports.uploadFileToDrive = uploadFileToDrive;
+// TODO
 const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const authClient = yield authorize();
     const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
@@ -93,15 +97,16 @@ const deleteFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, func
         fields: "files(id)",
     });
     if (file.data.files.length === 0) {
-        throw new Error("File not found");
+        (0, logger_1.error)("Google Drive: File not found");
+        throw new Error("Google Drive: File not found");
     }
     const fileId = file.data.files[0].id;
     try {
         yield drive.files.delete({ fileId });
-        console.log("File deleted successfully.");
+        (0, logger_1.info)("File deleted successfully.");
     }
     catch (error) {
-        console.log("Error deleting file:", error);
+        error("Error deleting file:", error);
     }
 });
 exports.deleteFileFromDrive = deleteFileFromDrive;
@@ -113,7 +118,8 @@ const getDocumentPreviewLink = (fileName) => __awaiter(void 0, void 0, void 0, f
         fields: "files(webViewLink)",
     });
     if (file.data.files.length === 0) {
-        throw new Error("File not found");
+        (0, logger_1.error)("Google Drive: File not found");
+        throw new Error("Google Drive: File not found");
     }
     const fileId = file.data.files[0].webViewLink;
     return fileId;

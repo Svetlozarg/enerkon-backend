@@ -1,6 +1,7 @@
-import { google } from "googleapis";
+import { drive_v3, google } from "googleapis";
 import fs from "fs";
 import { getFileMimeType, getFileName } from "../fileHelpers";
+import { error, info } from "../logger";
 
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 
@@ -17,14 +18,20 @@ const authorize = async () => {
   return jwtClient;
 };
 
-const uploadFile = (authClient: any, filePath: string) => {
+const uploadFile = (
+  authClient: any,
+  file: File,
+  filename: string,
+  mimeType: string
+) => {
   return new Promise((resolve, rejected) => {
-    const drive = google.drive({ version: "v3", auth: authClient });
-    const fileExtension = filePath.split(".").pop();
-    const mimeType = getFileMimeType(fileExtension);
+    const drive: drive_v3.Drive = google.drive({
+      version: "v3",
+      auth: authClient,
+    });
 
-    const fileMetaData = {
-      name: getFileName(filePath),
+    const fileMetaData: { name: string; parents: string[] } = {
+      name: filename,
       parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
     };
 
@@ -32,7 +39,7 @@ const uploadFile = (authClient: any, filePath: string) => {
       {
         requestBody: fileMetaData,
         media: {
-          body: fs.createReadStream(filePath),
+          body: file,
           mimeType: mimeType,
         },
         fields: "id",
@@ -47,22 +54,29 @@ const uploadFile = (authClient: any, filePath: string) => {
   });
 };
 
-export const uploadFileToDrive = async (filePath: string) => {
+export const uploadFileToDrive = async (
+  file: any,
+  filename: string,
+  mimeType: string
+) => {
   try {
     const authClient = await authorize();
 
-    const file = await uploadFile(authClient, filePath);
+    const uploadedFile = await uploadFile(authClient, file, filename, mimeType);
 
-    if (!file) {
+    if (!uploadedFile) {
+      error(`There was a problem uploading ${filename}`);
       throw new Error("Error while uploading file");
     } else {
-      console.log("%cFile uploaded successfully", "background-color: green");
+      info(`File ${filename} uploaded successfully`);
     }
-  } catch (error) {
-    console.log(error);
+  } catch (er) {
+    error(er);
+    throw new Error(er);
   }
 };
 
+// TODO
 export const downloadFileFromDrive = async (fileName: string) => {
   const authClient = await authorize();
   const drive = google.drive({ version: "v3", auth: authClient });
@@ -104,16 +118,17 @@ export const deleteFileFromDrive = async (fileName: string) => {
   });
 
   if (file.data.files.length === 0) {
-    throw new Error("File not found");
+    error("Google Drive: File not found");
+    throw new Error("Google Drive: File not found");
   }
 
   const fileId = file.data.files[0].id;
 
   try {
     await drive.files.delete({ fileId });
-    console.log("File deleted successfully.");
+    info("File deleted successfully.");
   } catch (error) {
-    console.log("Error deleting file:", error);
+    error("Error deleting file:", error);
   }
 };
 
@@ -127,7 +142,8 @@ export const getDocumentPreviewLink = async (fileName: string) => {
   });
 
   if (file.data.files.length === 0) {
-    throw new Error("File not found");
+    error("Google Drive: File not found");
+    throw new Error("Google Drive: File not found");
   }
 
   const fileId = file.data.files[0].webViewLink;

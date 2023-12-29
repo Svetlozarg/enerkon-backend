@@ -56,7 +56,7 @@ export const getProjectDocuments = asyncHandler(
 //@access private
 export const getProjectLog = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectLogs = await ProjectLog.find({ id: req.params.id });
+    const projectLogs = await ProjectLog.find({ project: req.params.id });
     if (!projectLogs) {
       res.status(404);
       throw new Error("Project log not found");
@@ -136,7 +136,7 @@ export const createProject = asyncHandler(
       createdProject.createdAt
     );
 
-    info("Project created successfully");
+    info(`Project ${title} created successfully`);
 
     res.status(201).json({ success: true, data: createdProject });
   }
@@ -183,7 +183,7 @@ export const updateProject = asyncHandler(
       updatedProject.updatedAt
     );
 
-    info("Project updated successfully");
+    info(`Project ${updatedProject.title} updated successfully`);
 
     res.status(200).json({ success: true, data: updatedProject });
   }

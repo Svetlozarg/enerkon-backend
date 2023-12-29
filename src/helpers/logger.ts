@@ -9,5 +9,5 @@ export function error(message: string) {
 }
 
 export function success(message: string) {
-  console.log(chalk.bgGreen(`${message}`));
+  console.log(chalk.bgHex("#008000")(`${message}`));
 }

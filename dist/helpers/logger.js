@@ -14,7 +14,7 @@ function error(message) {
 }
 exports.error = error;
 function success(message) {
-    console.log(chalk_1.default.bgGreen(`${message}`));
+    console.log(chalk_1.default.bgHex("#008000")(`${message}`));
 }
 exports.success = success;
 //# sourceMappingURL=logger.js.map

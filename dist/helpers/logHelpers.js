@@ -33,8 +33,8 @@ const updateProjectLog = (project, title, action, date) => __awaiter(void 0, voi
             throw new Error("Project log not created");
         }
     }
-    catch (error) {
-        error(`Project log could not be created`);
+    catch (err) {
+        (0, logger_1.error)(`Project log could not be created`);
         throw new Error("Project log not created");
     }
 });
@@ -47,8 +47,8 @@ const deleteProjectLog = (project) => __awaiter(void 0, void 0, void 0, function
             throw new Error("Project log not found");
         }
     }
-    catch (error) {
-        error(`Project log could not be deleted`);
+    catch (err) {
+        (0, logger_1.error)(`Project log could not be deleted`);
         throw new Error("Project log not deleted");
     }
 });

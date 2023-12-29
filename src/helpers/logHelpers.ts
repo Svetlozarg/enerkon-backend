@@ -26,7 +26,7 @@ export const updateProjectLog = async (
       error(`Project log could not be created`);
       throw new Error("Project log not created");
     }
-  } catch (error) {
+  } catch (err) {
     error(`Project log could not be created`);
     throw new Error("Project log not created");
   }
@@ -40,7 +40,7 @@ export const deleteProjectLog = async (project: Types.ObjectId) => {
       error(`Project log with the given project id not found `);
       throw new Error("Project log not found");
     }
-  } catch (error) {
+  } catch (err) {
     error(`Project log could not be deleted`);
     throw new Error("Project log not deleted");
   }

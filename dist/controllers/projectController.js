@@ -57,7 +57,7 @@ exports.getProjectDocuments = (0, express_async_handler_1.default)((req, res) =>
 //?@route GET /api/project/log/:id
 //@access private
 exports.getProjectLog = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const projectLogs = yield projectlog_model_1.default.find({ id: req.params.id });
+    const projectLogs = yield projectlog_model_1.default.find({ project: req.params.id });
     if (!projectLogs) {
         res.status(404);
         throw new Error("Project log not found");
@@ -118,7 +118,7 @@ exports.createProject = (0, express_async_handler_1.default)((req, res) => __awa
         throw new Error("Invalid project data");
     }
     (0, logHelpers_1.updateProjectLog)(new mongoose_1.Types.ObjectId(createdProject._id), createdProject.title, "Проектът е създаден", createdProject.createdAt);
-    (0, logger_1.info)("Project created successfully");
+    (0, logger_1.info)(`Project ${title} created successfully`);
     res.status(201).json({ success: true, data: createdProject });
 }));
 //@desc Update a project
@@ -150,7 +150,7 @@ exports.updateProject = (0, express_async_handler_1.default)((req, res) => __awa
         throw new Error("Project not found");
     }
     (0, logHelpers_1.updateProjectLog)(new mongoose_1.Types.ObjectId(projectId), updatedProject.title, logMessage, updatedProject.updatedAt);
-    (0, logger_1.info)("Project updated successfully");
+    (0, logger_1.info)(`Project ${updatedProject.title} updated successfully`);
     res.status(200).json({ success: true, data: updatedProject });
 }));
 //@desc Delete a project
