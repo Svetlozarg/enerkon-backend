@@ -11,13 +11,22 @@ import {
   getDocumentPreviewLink,
   uploadFileToDrive,
 } from "../helpers/FileStorage/fileStorageHelpers";
+import { createKCCDocument } from "../helpers/Documents/createKCCDocument";
 
 //@desc Get all documents
 //?@route GET /api/document/documents
 //@access private
 export const getAllDocuments = asyncHandler(
   async (req: Request, res: Response) => {
-    const documents = await Document.find();
+    const { owner } = req.body;
+
+    if (!owner) {
+      res.status(400);
+      error("Email is required");
+      throw new Error("Email is required");
+    }
+
+    const documents = await Document.find({ owner: owner });
 
     res.status(200).json({
       success: true,
@@ -42,16 +51,22 @@ export const getDocumentById = asyncHandler(
 );
 
 //@desc Create a document
-//!@route POST /api/document/create/:projectId
+//!@route POST /api/document/create/:owner/:projectId
 //@access private
 export const createDocument = asyncHandler(
   async (req: Request, res: Response) => {
-    const projectId = req.params.projectId;
+    const { owner, projectId } = req.params;
 
     if (!projectId) {
       res.status(400);
       error("Project ID is required");
       throw new Error("Project ID is required");
+    }
+
+    if (!owner) {
+      res.status(400);
+      error("Email is required");
+      throw new Error("Email is required");
     }
 
     const project = await Project.findById(projectId);
@@ -75,6 +90,7 @@ export const createDocument = asyncHandler(
 
       const document = new Document({
         title: filename,
+        owner: owner,
         project: projectId,
         size: 0.1,
         type: mimeType,
@@ -221,13 +237,11 @@ export const downloadDocument = asyncHandler(
 //@access private
 export const getPreviewLink = asyncHandler(
   async (req: Request, res: Response) => {
-    const { fileName } = req.params;
-
-    const previewLink = await getDocumentPreviewLink(fileName);
-
-    res.status(200).json({
-      success: true,
-      data: previewLink,
-    });
+    // const { fileName } = req.params;
+    // const previewLink = await getDocumentPreviewLink(fileName);
+    // res.status(200).json({
+    //   success: true,
+    //   data: previewLink,
+    // });
   }
 );

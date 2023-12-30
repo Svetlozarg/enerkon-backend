@@ -24,7 +24,13 @@ const logger_1 = require("../helpers/logger");
 //?@route GET /api/project/projects
 //@access private
 exports.getAllProjects = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const projects = yield project_model_1.default.find();
+    const { email } = req.body;
+    if (!email) {
+        res.status(400);
+        (0, logger_1.error)("Email is required");
+        throw new Error("Email is required");
+    }
+    const projects = yield project_model_1.default.find({ owner: email });
     res.status(200).json({ success: true, data: projects });
 }));
 //@desc Get a project by ID
@@ -68,7 +74,16 @@ exports.getProjectLog = (0, express_async_handler_1.default)((req, res) => __awa
 //?@route GET /api/project/analytics
 //@access private
 exports.getProjectsAnalytics = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { email } = req.body;
+    if (!email) {
+        res.status(400);
+        (0, logger_1.error)("Email is required");
+        throw new Error("Email is required");
+    }
     const analytics = yield project_model_1.default.aggregate([
+        {
+            $match: { owner: email },
+        },
         {
             $group: {
                 _id: {
@@ -171,4 +186,4 @@ exports.deleteProject = (0, express_async_handler_1.default)((req, res) => __awa
         message: "Project deleted successfully",
     });
 }));
-//# sourceMappingURL=projectController.js.map
+//# sourceMappingURL=project.controller.js.map

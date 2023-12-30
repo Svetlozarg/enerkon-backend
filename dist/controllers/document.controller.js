@@ -25,7 +25,13 @@ const fileStorageHelpers_1 = require("../helpers/FileStorage/fileStorageHelpers"
 //?@route GET /api/document/documents
 //@access private
 exports.getAllDocuments = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const documents = yield document_model_1.default.find();
+    const { owner } = req.body;
+    if (!owner) {
+        res.status(400);
+        (0, logger_1.error)("Email is required");
+        throw new Error("Email is required");
+    }
+    const documents = yield document_model_1.default.find({ owner: owner });
     res.status(200).json({
         success: true,
         data: documents,
@@ -45,14 +51,19 @@ exports.getDocumentById = (0, express_async_handler_1.default)((req, res) => __a
     }
 }));
 //@desc Create a document
-//!@route POST /api/document/create/:projectId
+//!@route POST /api/document/create/:owner/:projectId
 //@access private
 exports.createDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const projectId = req.params.projectId;
+    const { owner, projectId } = req.params;
     if (!projectId) {
         res.status(400);
         (0, logger_1.error)("Project ID is required");
         throw new Error("Project ID is required");
+    }
+    if (!owner) {
+        res.status(400);
+        (0, logger_1.error)("Email is required");
+        throw new Error("Email is required");
     }
     const project = yield project_model_1.default.findById(projectId);
     if (!project) {
@@ -68,6 +79,7 @@ exports.createDocument = (0, express_async_handler_1.default)((req, res) => __aw
         fileAdded = true;
         const document = new document_model_1.default({
             title: filename,
+            owner: owner,
             project: projectId,
             size: 0.1,
             type: mimeType,
@@ -168,11 +180,11 @@ exports.downloadDocument = (0, express_async_handler_1.default)((req, res) => __
 //?@route GET /api/document/preview/:fileName
 //@access private
 exports.getPreviewLink = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { fileName } = req.params;
-    const previewLink = yield (0, fileStorageHelpers_1.getDocumentPreviewLink)(fileName);
-    res.status(200).json({
-        success: true,
-        data: previewLink,
-    });
+    // const { fileName } = req.params;
+    // const previewLink = await getDocumentPreviewLink(fileName);
+    // res.status(200).json({
+    //   success: true,
+    //   data: previewLink,
+    // });
 }));
-//# sourceMappingURL=documentController.js.map
+//# sourceMappingURL=document.controller.js.map

@@ -3,6 +3,7 @@ import { Document as MongooseDocument, Schema, model, models } from "mongoose";
 export interface IDocument extends MongooseDocument {
   _id: string;
   title: string;
+  owner: string;
   project: string;
   size: number;
   type: string;
@@ -16,6 +17,11 @@ const documentSchema = new Schema(
   {
     title: {
       type: String,
+      required: true,
+    },
+    owner: {
+      type: String,
+      ref: "User",
       required: true,
     },
     project: {

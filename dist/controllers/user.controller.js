@@ -78,4 +78,4 @@ exports.loginUser = (0, express_async_handler_1.default)((req, res, next) => __a
         throw new Error("email or password is not valid");
     }
 }));
-//# sourceMappingURL=userController.js.map
+//# sourceMappingURL=user.controller.js.map

@@ -3,10 +3,10 @@ config();
 import express, { Request, Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import authRoutes from "./routes/authRoutes";
-import projectRoutes from "./routes/projectRoutes";
-import documentRoutes from "./routes/documentRoutes";
-import { success } from "./helpers/logger";
+import authRoutes from "./routes/auth.routes";
+import projectRoutes from "./routes/project.routes";
+import documentRoutes from "./routes/document.routes";
+import { error, success } from "./helpers/logger";
 
 const PORT = process.env.PORT || 5000;
 
@@ -24,7 +24,7 @@ app.use("/api", authRoutes);
 app.use("/api/project", projectRoutes);
 app.use("/api/document", documentRoutes);
 app.use((req: Request, res: Response) => {
-  res.status(404).json({ message: "404 Not Found" });
+  res.status(404).json({ message: "404: Route Not Found" });
 });
 
 mongoose
@@ -36,7 +36,8 @@ mongoose
     );
     app.listen(PORT);
   })
-  .catch((error) => {
-    console.log("Error: ", error.message);
+  .catch((err) => {
+    error("Failed to connect to database. Server is shutting down...");
+    console.log("Error: ", err.message);
     process.exit(1);
   });

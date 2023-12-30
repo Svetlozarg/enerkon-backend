@@ -9,7 +9,7 @@ import {
   getProjectLog,
   getProjectsAnalytics,
   updateProject,
-} from "../controllers/projectController";
+} from "../controllers/project.controller";
 
 const router = express.Router();
 

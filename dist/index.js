@@ -8,9 +8,9 @@ const dotenv_1 = require("dotenv");
 const express_1 = __importDefault(require("express"));
 const mongoose_1 = __importDefault(require("mongoose"));
 const cors_1 = __importDefault(require("cors"));
-const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
-const projectRoutes_1 = __importDefault(require("./routes/projectRoutes"));
-const documentRoutes_1 = __importDefault(require("./routes/documentRoutes"));
+const auth_routes_1 = __importDefault(require("./routes/auth.routes"));
+const project_routes_1 = __importDefault(require("./routes/project.routes"));
+const document_routes_1 = __importDefault(require("./routes/document.routes"));
 const logger_1 = require("./helpers/logger");
 const PORT = process.env.PORT || 5000;
 const app = (0, express_1.default)();
@@ -19,11 +19,11 @@ app.use((0, cors_1.default)({
 }));
 app.use(express_1.default.json());
 app.use(express_1.default.urlencoded({ extended: true }));
-app.use("/api", authRoutes_1.default);
-app.use("/api/project", projectRoutes_1.default);
-app.use("/api/document", documentRoutes_1.default);
+app.use("/api", auth_routes_1.default);
+app.use("/api/project", project_routes_1.default);
+app.use("/api/document", document_routes_1.default);
 app.use((req, res) => {
-    res.status(404).json({ message: "404 Not Found" });
+    res.status(404).json({ message: "404: Route Not Found" });
 });
 mongoose_1.default
     .connect(process.env.MONGO_CONNECTION_URL)
@@ -32,8 +32,9 @@ mongoose_1.default
     (0, logger_1.success)(`Database successfully connected => Host: ${connect.connection.host} / DB Name: ${connect.connection.name}`);
     app.listen(PORT);
 })
-    .catch((error) => {
-    console.log("Error: ", error.message);
+    .catch((err) => {
+    (0, logger_1.error)("Failed to connect to database. Server is shutting down...");
+    console.log("Error: ", err.message);
     process.exit(1);
 });
 //# sourceMappingURL=index.js.map

@@ -11,3 +11,7 @@ export function error(message: string) {
 export function success(message: string) {
   console.log(chalk.bgHex("#008000")(`${message}`));
 }
+
+export function warning(message: string) {
+  console.log(chalk.bgYellow(`WARNING: ${message}`));
+}

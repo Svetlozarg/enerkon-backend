@@ -8,14 +8,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getDocumentPreviewLink = exports.deleteFileFromDrive = exports.downloadFileFromDrive = exports.uploadFileToDrive = void 0;
 const googleapis_1 = require("googleapis");
-const fs_1 = __importDefault(require("fs"));
 const logger_1 = require("../logger");
+const stream_1 = require("stream");
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 const authorize = () => __awaiter(void 0, void 0, void 0, function* () {
     const jwtClient = new googleapis_1.google.auth.JWT(process.env.GOOGLE_CLIENT_EMAIL, null, process.env.GOOGLE_PRIVATE_KEY, SCOPE);
@@ -32,10 +29,17 @@ const uploadFile = (authClient, file, filename, mimeType) => {
             name: filename,
             parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
         };
+        let fileStream;
+        if (Buffer.isBuffer(file)) {
+            fileStream = stream_1.Readable.from(file);
+        }
+        else {
+            fileStream = file;
+        }
         drive.files.create({
             requestBody: fileMetaData,
             media: {
-                body: file,
+                body: fileStream,
                 mimeType: mimeType,
             },
             fields: "id",
@@ -78,15 +82,14 @@ const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, fu
     }
     const fileId = file.data.files[0].id;
     const response = yield drive.files.get({ fileId, alt: "media" }, { responseType: "stream" });
-    const dest = fs_1.default.createWriteStream(`./uploads/${fileName}`);
-    response.data
-        .on("end", () => {
-        console.log("Done downloading file.");
-    })
-        .on("error", (err) => {
-        console.log("Error downloading file.", err);
-    })
-        .pipe(dest);
+    if (response.data) {
+        (0, logger_1.info)("File downloaded successfully");
+        return response.data;
+    }
+    else {
+        (0, logger_1.error)("Error downloading file");
+        throw new Error("Error downloading file");
+    }
 });
 exports.downloadFileFromDrive = downloadFileFromDrive;
 const deleteFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {

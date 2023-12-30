@@ -1,7 +1,6 @@
 import { drive_v3, google } from "googleapis";
-import fs from "fs";
-import { getFileMimeType, getFileName } from "../fileHelpers";
 import { error, info } from "../logger";
+import { Readable } from "stream";
 
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 
@@ -35,11 +34,18 @@ const uploadFile = (
       parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
     };
 
+    let fileStream;
+    if (Buffer.isBuffer(file)) {
+      fileStream = Readable.from(file);
+    } else {
+      fileStream = file;
+    }
+
     drive.files.create(
       {
         requestBody: fileMetaData,
         media: {
-          body: file,
+          body: fileStream,
           mimeType: mimeType,
         },
         fields: "id",
@@ -97,15 +103,13 @@ export const downloadFileFromDrive = async (fileName: string) => {
     { responseType: "stream" }
   );
 
-  const dest = fs.createWriteStream(`./uploads/${fileName}`);
-  response.data
-    .on("end", () => {
-      console.log("Done downloading file.");
-    })
-    .on("error", (err) => {
-      console.log("Error downloading file.", err);
-    })
-    .pipe(dest);
+  if (response.data) {
+    info("File downloaded successfully");
+    return response.data;
+  } else {
+    error("Error downloading file");
+    throw new Error("Error downloading file");
+  }
 };
 
 export const deleteFileFromDrive = async (fileName: string) => {

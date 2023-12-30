@@ -12,7 +12,15 @@ import { error, info } from "../helpers/logger";
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const projects = await Project.find();
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400);
+      error("Email is required");
+      throw new Error("Email is required");
+    }
+
+    const projects = await Project.find({ owner: email });
     res.status(200).json({ success: true, data: projects });
   }
 );
@@ -70,7 +78,18 @@ export const getProjectLog = asyncHandler(
 //@access private
 export const getProjectsAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
+    const { email } = req.body;
+
+    if (!email) {
+      res.status(400);
+      error("Email is required");
+      throw new Error("Email is required");
+    }
+
     const analytics = await Project.aggregate([
+      {
+        $match: { owner: email },
+      },
       {
         $group: {
           _id: {
