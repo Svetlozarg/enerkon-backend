@@ -74,13 +74,13 @@ export const getProjectLog = asyncHandler(
 );
 
 //@desc Get projects analytics
-//?@route GET /api/project/analytics
+//?@route GET /api/project/analytics/:owner
 //@access private
 export const getProjectsAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
-    const { email } = req.body;
+    const { owner } = req.params;
 
-    if (!email) {
+    if (!owner) {
       res.status(400);
       error("Email is required");
       throw new Error("Email is required");
@@ -88,7 +88,7 @@ export const getProjectsAnalytics = asyncHandler(
 
     const analytics = await Project.aggregate([
       {
-        $match: { owner: email },
+        $match: { owner: owner },
       },
       {
         $group: {

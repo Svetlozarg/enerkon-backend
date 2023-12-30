@@ -11,7 +11,7 @@ router.get("/projects", validateTokenHandler_1.validateToken, project_controller
 router.get("/:id", validateTokenHandler_1.validateToken, project_controller_1.getProjectById);
 router.get("/:id/documents", validateTokenHandler_1.validateToken, project_controller_1.getProjectDocuments);
 router.get("/log/:id", validateTokenHandler_1.validateToken, project_controller_1.getProjectLog);
-router.get("/projects/analytics", validateTokenHandler_1.validateToken, project_controller_1.getProjectsAnalytics);
+router.get("/projects/analytics/:owner", validateTokenHandler_1.validateToken, project_controller_1.getProjectsAnalytics);
 router.post("/create", validateTokenHandler_1.validateToken, project_controller_1.createProject);
 router.put("/update/:id", validateTokenHandler_1.validateToken, project_controller_1.updateProject);
 router.delete("/delete", validateTokenHandler_1.validateToken, project_controller_1.deleteProject);

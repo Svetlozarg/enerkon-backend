@@ -71,18 +71,18 @@ exports.getProjectLog = (0, express_async_handler_1.default)((req, res) => __awa
     res.status(200).json({ success: true, data: projectLogs });
 }));
 //@desc Get projects analytics
-//?@route GET /api/project/analytics
+//?@route GET /api/project/analytics/:owner
 //@access private
 exports.getProjectsAnalytics = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { email } = req.body;
-    if (!email) {
+    const { owner } = req.params;
+    if (!owner) {
         res.status(400);
         (0, logger_1.error)("Email is required");
         throw new Error("Email is required");
     }
     const analytics = yield project_model_1.default.aggregate([
         {
-            $match: { owner: email },
+            $match: { owner: owner },
         },
         {
             $group: {

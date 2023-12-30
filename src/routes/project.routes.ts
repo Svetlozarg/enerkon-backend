@@ -20,7 +20,7 @@ router.get("/:id/documents", validateToken, getProjectDocuments);
 
 router.get("/log/:id", validateToken, getProjectLog);
 
-router.get("/projects/analytics", validateToken, getProjectsAnalytics);
+router.get("/projects/analytics/:owner", validateToken, getProjectsAnalytics);
 
 router.post("/create", validateToken, createProject);
 router.put("/update/:id", validateToken, updateProject);
