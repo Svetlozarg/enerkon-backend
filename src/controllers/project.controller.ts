@@ -8,19 +8,19 @@ import { Types } from "mongoose";
 import { error, info } from "../helpers/logger";
 
 //@desc Get all projects
-//?@route GET /api/project/projects
+//?@route GET /api/project/:owner/projects
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const { email } = req.body;
+    const { owner } = req.body;
 
-    if (!email) {
+    if (!owner) {
       res.status(400);
       error("Email is required");
       throw new Error("Email is required");
     }
 
-    const projects = await Project.find({ owner: email });
+    const projects = await Project.find({ owner: owner });
     res.status(200).json({ success: true, data: projects });
   }
 );
@@ -129,11 +129,12 @@ export const getProjectsAnalytics = asyncHandler(
 );
 
 //@desc Create a project
-//!@route POST /api/project/create
+//!@route POST /api/project/:owner/create
 //@access private
 export const createProject = asyncHandler(
   async (req: Request, res: Response) => {
-    const { title, owner } = req.body;
+    const { title } = req.body;
+    const { owner } = req.params;
 
     const project = new Project({
       title,

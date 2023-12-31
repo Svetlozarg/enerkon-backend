@@ -13,7 +13,7 @@ import {
 
 const router = express.Router();
 
-router.get("/projects", validateToken, getAllProjects);
+router.get("/:owner/projects", validateToken, getAllProjects);
 router.get("/:id", validateToken, getProjectById);
 
 router.get("/:id/documents", validateToken, getProjectDocuments);
@@ -22,7 +22,7 @@ router.get("/log/:id", validateToken, getProjectLog);
 
 router.get("/projects/analytics/:owner", validateToken, getProjectsAnalytics);
 
-router.post("/create", validateToken, createProject);
+router.post("/:owner/create", validateToken, createProject);
 router.put("/update/:id", validateToken, updateProject);
 router.delete("/delete", validateToken, deleteProject);
 
