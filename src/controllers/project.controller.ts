@@ -12,7 +12,7 @@ import { error, info } from "../helpers/logger";
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.body;
+    const { owner } = req.params;
 
     if (!owner) {
       res.status(400);
