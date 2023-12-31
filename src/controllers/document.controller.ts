@@ -14,11 +14,11 @@ import {
 import { createKCCDocument } from "../helpers/Documents/createKCCDocument";
 
 //@desc Get all documents
-//?@route GET /api/document/documents
+//?@route GET /api/document/:owner/documents
 //@access private
 export const getAllDocuments = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.body;
+    const { owner } = req.params;
 
     if (!owner) {
       res.status(400);

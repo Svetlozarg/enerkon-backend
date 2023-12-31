@@ -22,10 +22,10 @@ const logHelpers_1 = require("../helpers/logHelpers");
 const mongoose_1 = require("mongoose");
 const fileStorageHelpers_1 = require("../helpers/FileStorage/fileStorageHelpers");
 //@desc Get all documents
-//?@route GET /api/document/documents
+//?@route GET /api/document/:owner/documents
 //@access private
 exports.getAllDocuments = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { owner } = req.body;
+    const { owner } = req.params;
     if (!owner) {
         res.status(400);
         (0, logger_1.error)("Email is required");
