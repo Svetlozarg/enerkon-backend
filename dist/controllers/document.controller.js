@@ -180,11 +180,11 @@ exports.downloadDocument = (0, express_async_handler_1.default)((req, res) => __
 //?@route GET /api/document/preview/:fileName
 //@access private
 exports.getPreviewLink = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    // const { fileName } = req.params;
-    // const previewLink = await getDocumentPreviewLink(fileName);
-    // res.status(200).json({
-    //   success: true,
-    //   data: previewLink,
-    // });
+    const { fileName } = req.params;
+    const previewLink = yield (0, fileStorageHelpers_1.getDocumentPreviewLink)(fileName);
+    res.status(200).json({
+        success: true,
+        data: previewLink,
+    });
 }));
 //# sourceMappingURL=document.controller.js.map

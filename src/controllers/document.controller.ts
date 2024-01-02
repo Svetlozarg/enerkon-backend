@@ -237,11 +237,11 @@ export const downloadDocument = asyncHandler(
 //@access private
 export const getPreviewLink = asyncHandler(
   async (req: Request, res: Response) => {
-    // const { fileName } = req.params;
-    // const previewLink = await getDocumentPreviewLink(fileName);
-    // res.status(200).json({
-    //   success: true,
-    //   data: previewLink,
-    // });
+    const { fileName } = req.params;
+    const previewLink = await getDocumentPreviewLink(fileName);
+    res.status(200).json({
+      success: true,
+      data: previewLink,
+    });
   }
 );

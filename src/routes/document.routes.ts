@@ -11,7 +11,7 @@ import {
 
 const router = express.Router();
 
-router.get("/documents", validateToken, getAllDocuments);
+router.get("/:owner/documents", validateToken, getAllDocuments);
 router.get("/:id", validateToken, getDocumentById);
 router.post("/create/:owner/:projectId", validateToken, createDocument);
 router.put("/update/:id", validateToken, updateDocument);
