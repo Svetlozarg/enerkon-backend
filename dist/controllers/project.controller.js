@@ -21,10 +21,10 @@ const logHelpers_1 = require("../helpers/logHelpers");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../helpers/logger");
 //@desc Get all projects
-//?@route GET /api/project/:owner/projects
+//?@route GET /api/project/projects
 //@access private
 exports.getAllProjects = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { owner } = req.params;
+    const { owner } = req.body;
     if (!owner) {
         res.status(400);
         (0, logger_1.error)("Email is required");
@@ -71,10 +71,10 @@ exports.getProjectLog = (0, express_async_handler_1.default)((req, res) => __awa
     res.status(200).json({ success: true, data: projectLogs });
 }));
 //@desc Get projects analytics
-//?@route GET /api/project/analytics/:owner
+//?@route GET /api/project/analytics
 //@access private
 exports.getProjectsAnalytics = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { owner } = req.params;
+    const { owner } = req.body;
     if (!owner) {
         res.status(400);
         (0, logger_1.error)("Email is required");
@@ -118,11 +118,10 @@ exports.getProjectsAnalytics = (0, express_async_handler_1.default)((req, res) =
     });
 }));
 //@desc Create a project
-//!@route POST /api/project/:owner/create
+//!@route POST /api/project/create
 //@access private
 exports.createProject = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { title } = req.body;
-    const { owner } = req.params;
+    const { title, owner } = req.body;
     const project = new project_model_1.default({
         title,
         owner,

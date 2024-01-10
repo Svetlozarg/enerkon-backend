@@ -8,11 +8,11 @@ import { Types } from "mongoose";
 import { error, info } from "../helpers/logger";
 
 //@desc Get all projects
-//?@route GET /api/project/:owner/projects
+//?@route GET /api/project/projects
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.params;
+    const { owner } = req.body;
 
     if (!owner) {
       res.status(400);
@@ -74,11 +74,11 @@ export const getProjectLog = asyncHandler(
 );
 
 //@desc Get projects analytics
-//?@route GET /api/project/analytics/:owner
+//?@route GET /api/project/analytics
 //@access private
 export const getProjectsAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.params;
+    const { owner } = req.body;
 
     if (!owner) {
       res.status(400);
@@ -129,12 +129,11 @@ export const getProjectsAnalytics = asyncHandler(
 );
 
 //@desc Create a project
-//!@route POST /api/project/:owner/create
+//!@route POST /api/project/create
 //@access private
 export const createProject = asyncHandler(
   async (req: Request, res: Response) => {
-    const { title } = req.body;
-    const { owner } = req.params;
+    const { title, owner } = req.body;
 
     const project = new Project({
       title,
