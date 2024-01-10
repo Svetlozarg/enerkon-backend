@@ -13,7 +13,7 @@ import {
 
 const router = express.Router();
 
-router.get("/projects", validateToken, getAllProjects);
+router.get("/:owner/projects", validateToken, getAllProjects);
 router.get("/:id", validateToken, getProjectById);
 
 router.get("/:id/documents", validateToken, getProjectDocuments);

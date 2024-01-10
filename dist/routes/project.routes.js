@@ -7,7 +7,7 @@ const express_1 = __importDefault(require("express"));
 const validateTokenHandler_1 = require("../middleware/validateTokenHandler");
 const project_controller_1 = require("../controllers/project.controller");
 const router = express_1.default.Router();
-router.get("/projects", validateTokenHandler_1.validateToken, project_controller_1.getAllProjects);
+router.get("/:owner/projects", validateTokenHandler_1.validateToken, project_controller_1.getAllProjects);
 router.get("/:id", validateTokenHandler_1.validateToken, project_controller_1.getProjectById);
 router.get("/:id/documents", validateTokenHandler_1.validateToken, project_controller_1.getProjectDocuments);
 router.get("/log/:id", validateTokenHandler_1.validateToken, project_controller_1.getProjectLog);

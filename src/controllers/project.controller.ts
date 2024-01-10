@@ -8,11 +8,11 @@ import { Types } from "mongoose";
 import { error, info } from "../helpers/logger";
 
 //@desc Get all projects
-//?@route GET /api/project/projects
+//?@route GET /api/project/:owner/projects
 //@access private
 export const getAllProjects = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.body;
+    const { owner } = req.params;
 
     if (!owner) {
       res.status(400);
