@@ -74,11 +74,11 @@ export const getProjectLog = asyncHandler(
 );
 
 //@desc Get projects analytics
-//?@route GET /api/project/analytics
+//?@route GET /api/project/:owner/analytics
 //@access private
 export const getProjectsAnalytics = asyncHandler(
   async (req: Request, res: Response) => {
-    const { owner } = req.body;
+    const { owner } = req.params;
 
     if (!owner) {
       res.status(400);
