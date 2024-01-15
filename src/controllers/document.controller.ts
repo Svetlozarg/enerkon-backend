@@ -94,6 +94,9 @@ export const createDocument = asyncHandler(
         project: projectId,
         size: 0.1,
         type: mimeType,
+        default: true
+          ? filename === "Project.xml" || filename === "Master_file.xlsx"
+          : false,
       });
 
       try {

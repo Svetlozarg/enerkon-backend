@@ -83,6 +83,9 @@ exports.createDocument = (0, express_async_handler_1.default)((req, res) => __aw
             project: projectId,
             size: 0.1,
             type: mimeType,
+            default: true
+                ? filename === "Project.xml" || filename === "Master_file.xlsx"
+                : false,
         });
         try {
             const savedDocument = yield document.save();
