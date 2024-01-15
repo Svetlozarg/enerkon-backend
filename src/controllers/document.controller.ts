@@ -218,6 +218,13 @@ export const deleteDocument = asyncHandler(
 
     loggerInfo(`Document ${fileName} deleted successfully`);
 
+    updateProjectLog(
+      new Types.ObjectId(id),
+      fileName,
+      "Файлът е изтрит",
+      new Date()
+    );
+
     res.json({
       success: true,
       message: `Document ${fileName} deleted successfully`,

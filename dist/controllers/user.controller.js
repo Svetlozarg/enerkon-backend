@@ -71,7 +71,12 @@ exports.loginUser = (0, express_async_handler_1.default)((req, res, next) => __a
         }, process.env.ACCESS_TOKEN_SECERT, { expiresIn: "24h" });
         res
             .status(200)
-            .json({ _id: user.id, email: user.email, accessToken: accessToken });
+            .json({
+            _id: user.id,
+            username: user.username,
+            email: user.email,
+            accessToken: accessToken,
+        });
     }
     else {
         res.status(401);

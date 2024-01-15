@@ -167,6 +167,7 @@ exports.deleteDocument = (0, express_async_handler_1.default)((req, res) => __aw
         : fileName;
     (0, fileStorageHelpers_1.deleteFileFromDrive)(formattedFileName);
     (0, logger_1.info)(`Document ${fileName} deleted successfully`);
+    (0, logHelpers_1.updateProjectLog)(new mongoose_1.Types.ObjectId(id), fileName, "Файлът е изтрит", new Date());
     res.json({
         success: true,
         message: `Document ${fileName} deleted successfully`,

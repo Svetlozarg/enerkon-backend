@@ -75,7 +75,12 @@ export const loginUser = asyncHandler(
       );
       res
         .status(200)
-        .json({ _id: user.id, email: user.email, accessToken: accessToken });
+        .json({
+          _id: user.id,
+          username: user.username,
+          email: user.email,
+          accessToken: accessToken,
+        });
     } else {
       res.status(401);
       throw new Error("email or password is not valid");
