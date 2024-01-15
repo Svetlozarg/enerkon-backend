@@ -1,4 +1,4 @@
-import { drive_v3, google } from "googleapis";
+import { google } from "googleapis";
 import { error, info } from "../logger";
 import { Readable } from "stream";
 
@@ -17,22 +17,15 @@ const authorize = async () => {
   return jwtClient;
 };
 
-const uploadFile = (
-  authClient: any,
-  file: File,
+export const uploadFileToGoogleDrive = async (
   filename: string,
-  mimeType: string
+  mimeType: string,
+  file: any
 ) => {
-  return new Promise((resolve, rejected) => {
-    const drive: drive_v3.Drive = google.drive({
-      version: "v3",
-      auth: authClient,
-    });
+  try {
+    const authClient = await authorize();
 
-    const fileMetaData: { name: string; parents: string[] } = {
-      name: filename,
-      parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
-    };
+    const drive = google.drive({ version: "v3", auth: authClient });
 
     let fileStream;
     if (Buffer.isBuffer(file)) {
@@ -41,44 +34,23 @@ const uploadFile = (
       fileStream = file;
     }
 
-    drive.files.create(
-      {
-        requestBody: fileMetaData,
-        media: {
-          body: fileStream,
-          mimeType: mimeType,
-        },
-        fields: "id",
+    const uploadFile = await drive.files.create({
+      fields: "id",
+      media: {
+        body: fileStream,
+        mimeType: mimeType,
       },
-      function (error: any, file: any) {
-        if (error) {
-          return rejected(error);
-        }
-        resolve(file);
-      }
-    );
-  });
-};
+      requestBody: {
+        name: filename,
+        parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
+      },
+    });
 
-export const uploadFileToDrive = async (
-  file: any,
-  filename: string,
-  mimeType: string
-) => {
-  try {
-    const authClient = await authorize();
-
-    const uploadedFile = await uploadFile(authClient, file, filename, mimeType);
-
-    if (!uploadedFile) {
-      error(`There was a problem uploading ${filename}`);
-      throw new Error("Error while uploading file");
-    } else {
+    if (uploadFile) {
       info(`File ${filename} uploaded successfully`);
     }
-  } catch (er) {
-    error(er);
-    throw new Error(er);
+  } catch (error) {
+    error(error);
   }
 };
 

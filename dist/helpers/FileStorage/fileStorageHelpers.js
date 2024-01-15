@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDocumentPreviewLink = exports.deleteFileFromDrive = exports.downloadFileFromDrive = exports.uploadFileToDrive = void 0;
+exports.getDocumentPreviewLink = exports.deleteFileFromDrive = exports.downloadFileFromDrive = exports.uploadFileToGoogleDrive = void 0;
 const googleapis_1 = require("googleapis");
 const logger_1 = require("../logger");
 const stream_1 = require("stream");
@@ -19,16 +19,10 @@ const authorize = () => __awaiter(void 0, void 0, void 0, function* () {
     yield jwtClient.authorize();
     return jwtClient;
 });
-const uploadFile = (authClient, file, filename, mimeType) => {
-    return new Promise((resolve, rejected) => {
-        const drive = googleapis_1.google.drive({
-            version: "v3",
-            auth: authClient,
-        });
-        const fileMetaData = {
-            name: filename,
-            parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
-        };
+const uploadFileToGoogleDrive = (filename, mimeType, file) => __awaiter(void 0, void 0, void 0, function* () {
+    try {
+        const authClient = yield authorize();
+        const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
         let fileStream;
         if (Buffer.isBuffer(file)) {
             fileStream = stream_1.Readable.from(file);
@@ -36,39 +30,26 @@ const uploadFile = (authClient, file, filename, mimeType) => {
         else {
             fileStream = file;
         }
-        drive.files.create({
-            requestBody: fileMetaData,
+        const uploadFile = yield drive.files.create({
+            fields: "id",
             media: {
                 body: fileStream,
                 mimeType: mimeType,
             },
-            fields: "id",
-        }, function (error, file) {
-            if (error) {
-                return rejected(error);
-            }
-            resolve(file);
+            requestBody: {
+                name: filename,
+                parents: ["1DeaVaoSLAR9n6R5UdhKi0VURCQVSPeC4"],
+            },
         });
-    });
-};
-const uploadFileToDrive = (file, filename, mimeType) => __awaiter(void 0, void 0, void 0, function* () {
-    try {
-        const authClient = yield authorize();
-        const uploadedFile = yield uploadFile(authClient, file, filename, mimeType);
-        if (!uploadedFile) {
-            (0, logger_1.error)(`There was a problem uploading ${filename}`);
-            throw new Error("Error while uploading file");
-        }
-        else {
+        if (uploadFile) {
             (0, logger_1.info)(`File ${filename} uploaded successfully`);
         }
     }
-    catch (er) {
-        (0, logger_1.error)(er);
-        throw new Error(er);
+    catch (error) {
+        error(error);
     }
 });
-exports.uploadFileToDrive = uploadFileToDrive;
+exports.uploadFileToGoogleDrive = uploadFileToGoogleDrive;
 // TODO
 const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const authClient = yield authorize();

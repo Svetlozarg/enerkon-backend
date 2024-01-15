@@ -75,7 +75,7 @@ const writeDataToExcel = (templateFileName, outputFileName, excelData) => __awai
         });
     });
     const buffer = yield workbook.xlsx.writeBuffer();
-    yield (0, fileStorageHelpers_1.uploadFileToDrive)(buffer, outputFileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    yield (0, fileStorageHelpers_1.uploadFileToGoogleDrive)(outputFileName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", buffer);
 });
 exports.writeDataToExcel = writeDataToExcel;
 //# sourceMappingURL=fileHelpers.js.map

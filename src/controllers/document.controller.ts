@@ -9,7 +9,7 @@ import { Types } from "mongoose";
 import {
   deleteFileFromDrive,
   getDocumentPreviewLink,
-  uploadFileToDrive,
+  uploadFileToGoogleDrive,
 } from "../helpers/FileStorage/fileStorageHelpers";
 import { createKCCDocument } from "../helpers/Documents/createKCCDocument";
 
@@ -107,7 +107,7 @@ export const createDocument = asyncHandler(
             ? `${projectName}-${filename}`
             : filename;
 
-        uploadFileToDrive(file, formattedFileName, mimeType);
+        await uploadFileToGoogleDrive(filename, mimeType, file);
 
         updateProjectLog(
           new Types.ObjectId(projectId),

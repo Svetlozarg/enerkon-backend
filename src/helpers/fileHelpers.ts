@@ -2,7 +2,7 @@ import xml2js from "xml2js";
 import { error } from "./logger";
 import {
   downloadFileFromDrive,
-  uploadFileToDrive,
+  uploadFileToGoogleDrive,
 } from "./FileStorage/fileStorageHelpers";
 import ExcelJS from "exceljs";
 
@@ -93,9 +93,9 @@ export const writeDataToExcel = async (
 
   const buffer = await workbook.xlsx.writeBuffer();
 
-  await uploadFileToDrive(
-    buffer,
+  await uploadFileToGoogleDrive(
     outputFileName,
-    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    buffer
   );
 };
