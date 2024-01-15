@@ -54,6 +54,49 @@ export const uploadFileToGoogleDrive = async (
   }
 };
 
+export const getDocumentPreviewLink = async (fileName: string) => {
+  const authClient = await authorize();
+  const drive = google.drive({ version: "v3", auth: authClient });
+
+  const file = await drive.files.list({
+    q: `name='${fileName}'`,
+    fields: "files(webViewLink)",
+  });
+
+  if (file.data.files.length === 0) {
+    error("Google Drive: File not found");
+    throw new Error("Google Drive: File not found");
+  }
+
+  const fileId = file.data.files[0].webViewLink;
+
+  return fileId;
+};
+
+export const deleteFileFromDrive = async (fileName: string) => {
+  const authClient = await authorize();
+  const drive = google.drive({ version: "v3", auth: authClient });
+
+  const file = await drive.files.list({
+    q: `name='${fileName}'`,
+    fields: "files(id)",
+  });
+
+  if (file.data.files.length === 0) {
+    error("Google Drive: File not found");
+    throw new Error("Google Drive: File not found");
+  }
+
+  const fileId = file.data.files[0].id;
+
+  try {
+    await drive.files.delete({ fileId });
+    info("File deleted successfully.");
+  } catch (error) {
+    error("Error deleting file:", error);
+  }
+};
+
 // TODO
 export const downloadFileFromDrive = async (fileName: string) => {
   const authClient = await authorize();
@@ -82,47 +125,4 @@ export const downloadFileFromDrive = async (fileName: string) => {
     error("Error downloading file");
     throw new Error("Error downloading file");
   }
-};
-
-export const deleteFileFromDrive = async (fileName: string) => {
-  const authClient = await authorize();
-  const drive = google.drive({ version: "v3", auth: authClient });
-
-  const file = await drive.files.list({
-    q: `name='${fileName}'`,
-    fields: "files(id)",
-  });
-
-  if (file.data.files.length === 0) {
-    error("Google Drive: File not found");
-    throw new Error("Google Drive: File not found");
-  }
-
-  const fileId = file.data.files[0].id;
-
-  try {
-    await drive.files.delete({ fileId });
-    info("File deleted successfully.");
-  } catch (error) {
-    error("Error deleting file:", error);
-  }
-};
-
-export const getDocumentPreviewLink = async (fileName: string) => {
-  const authClient = await authorize();
-  const drive = google.drive({ version: "v3", auth: authClient });
-
-  const file = await drive.files.list({
-    q: `name='${fileName}'`,
-    fields: "files(webViewLink)",
-  });
-
-  if (file.data.files.length === 0) {
-    error("Google Drive: File not found");
-    throw new Error("Google Drive: File not found");
-  }
-
-  const fileId = file.data.files[0].webViewLink;
-
-  return fileId;
 };

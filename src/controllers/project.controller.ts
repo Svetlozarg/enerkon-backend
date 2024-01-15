@@ -6,6 +6,7 @@ import ProjectLog from "../models/projectlog.model";
 import { deleteProjectLog, updateProjectLog } from "../helpers/logHelpers";
 import { Types } from "mongoose";
 import { error, info } from "../helpers/logger";
+import { deleteFileFromDrive } from "../helpers/FileStorage/fileStorageHelpers";
 
 //@desc Get all projects
 //?@route GET /api/project/:owner/projects
@@ -215,6 +216,8 @@ export const deleteProject = asyncHandler(
   async (req: Request, res: Response) => {
     const { id } = req.body;
 
+    const project = await Project.findById(id);
+
     const deletedProject = await Project.findByIdAndDelete(id);
 
     if (!deletedProject) {
@@ -223,7 +226,19 @@ export const deleteProject = asyncHandler(
       throw new Error("Project not found");
     }
 
-    await Document.deleteMany({ project: id });
+    const deletedDocuments = await Document.find({ project: id });
+
+    for (const document of deletedDocuments) {
+      const formattedFileName =
+        document.title === "Project.xml" ||
+        document.title === "Master_file.xlsx"
+          ? `${project.title}-${document.title}`
+          : document.title;
+
+      deleteFileFromDrive(formattedFileName);
+
+      await Document.findByIdAndDelete(document._id);
+    }
 
     deleteProjectLog(id);
 

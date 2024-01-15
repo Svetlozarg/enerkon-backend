@@ -20,6 +20,7 @@ const projectlog_model_1 = __importDefault(require("../models/projectlog.model")
 const logHelpers_1 = require("../helpers/logHelpers");
 const mongoose_1 = require("mongoose");
 const logger_1 = require("../helpers/logger");
+const fileStorageHelpers_1 = require("../helpers/FileStorage/fileStorageHelpers");
 //@desc Get all projects
 //?@route GET /api/project/:owner/projects
 //@access private
@@ -173,13 +174,22 @@ exports.updateProject = (0, express_async_handler_1.default)((req, res) => __awa
 //@access private
 exports.deleteProject = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { id } = req.body;
+    const project = yield project_model_1.default.findById(id);
     const deletedProject = yield project_model_1.default.findByIdAndDelete(id);
     if (!deletedProject) {
         res.status(404);
         (0, logger_1.error)("Project not found and cannot be deleted");
         throw new Error("Project not found");
     }
-    yield document_model_1.default.deleteMany({ project: id });
+    const deletedDocuments = yield document_model_1.default.find({ project: id });
+    for (const document of deletedDocuments) {
+        const formattedFileName = document.title === "Project.xml" ||
+            document.title === "Master_file.xlsx"
+            ? `${project.title}-${document.title}`
+            : document.title;
+        (0, fileStorageHelpers_1.deleteFileFromDrive)(formattedFileName);
+        yield document_model_1.default.findByIdAndDelete(document._id);
+    }
     (0, logHelpers_1.deleteProjectLog)(id);
     (0, logger_1.info)("Project deleted successfully");
     res.json({

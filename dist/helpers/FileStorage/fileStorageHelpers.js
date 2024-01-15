@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getDocumentPreviewLink = exports.deleteFileFromDrive = exports.downloadFileFromDrive = exports.uploadFileToGoogleDrive = void 0;
+exports.downloadFileFromDrive = exports.deleteFileFromDrive = exports.getDocumentPreviewLink = exports.uploadFileToGoogleDrive = void 0;
 const googleapis_1 = require("googleapis");
 const logger_1 = require("../logger");
 const stream_1 = require("stream");
@@ -50,6 +50,42 @@ const uploadFileToGoogleDrive = (filename, mimeType, file) => __awaiter(void 0, 
     }
 });
 exports.uploadFileToGoogleDrive = uploadFileToGoogleDrive;
+const getDocumentPreviewLink = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
+    const authClient = yield authorize();
+    const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
+    const file = yield drive.files.list({
+        q: `name='${fileName}'`,
+        fields: "files(webViewLink)",
+    });
+    if (file.data.files.length === 0) {
+        (0, logger_1.error)("Google Drive: File not found");
+        throw new Error("Google Drive: File not found");
+    }
+    const fileId = file.data.files[0].webViewLink;
+    return fileId;
+});
+exports.getDocumentPreviewLink = getDocumentPreviewLink;
+const deleteFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
+    const authClient = yield authorize();
+    const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
+    const file = yield drive.files.list({
+        q: `name='${fileName}'`,
+        fields: "files(id)",
+    });
+    if (file.data.files.length === 0) {
+        (0, logger_1.error)("Google Drive: File not found");
+        throw new Error("Google Drive: File not found");
+    }
+    const fileId = file.data.files[0].id;
+    try {
+        yield drive.files.delete({ fileId });
+        (0, logger_1.info)("File deleted successfully.");
+    }
+    catch (error) {
+        error("Error deleting file:", error);
+    }
+});
+exports.deleteFileFromDrive = deleteFileFromDrive;
 // TODO
 const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const authClient = yield authorize();
@@ -73,40 +109,4 @@ const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, fu
     }
 });
 exports.downloadFileFromDrive = downloadFileFromDrive;
-const deleteFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
-    const authClient = yield authorize();
-    const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
-    const file = yield drive.files.list({
-        q: `name='${fileName}'`,
-        fields: "files(id)",
-    });
-    if (file.data.files.length === 0) {
-        (0, logger_1.error)("Google Drive: File not found");
-        throw new Error("Google Drive: File not found");
-    }
-    const fileId = file.data.files[0].id;
-    try {
-        yield drive.files.delete({ fileId });
-        (0, logger_1.info)("File deleted successfully.");
-    }
-    catch (error) {
-        error("Error deleting file:", error);
-    }
-});
-exports.deleteFileFromDrive = deleteFileFromDrive;
-const getDocumentPreviewLink = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
-    const authClient = yield authorize();
-    const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });
-    const file = yield drive.files.list({
-        q: `name='${fileName}'`,
-        fields: "files(webViewLink)",
-    });
-    if (file.data.files.length === 0) {
-        (0, logger_1.error)("Google Drive: File not found");
-        throw new Error("Google Drive: File not found");
-    }
-    const fileId = file.data.files[0].webViewLink;
-    return fileId;
-});
-exports.getDocumentPreviewLink = getDocumentPreviewLink;
 //# sourceMappingURL=fileStorageHelpers.js.map
