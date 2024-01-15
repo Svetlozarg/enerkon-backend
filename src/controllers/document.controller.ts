@@ -77,9 +77,9 @@ export const createDocument = asyncHandler(
       throw new Error("Project not found");
     }
 
-    const projectName = project?.title || "";
-
     const bb = busboy({ headers: req.headers });
+
+    const projectName = project.title;
 
     let fileAdded = false;
 

@@ -71,8 +71,8 @@ exports.createDocument = (0, express_async_handler_1.default)((req, res) => __aw
         (0, logger_1.error)("Project not found");
         throw new Error("Project not found");
     }
-    const projectName = (project === null || project === void 0 ? void 0 : project.title) || "";
     const bb = (0, busboy_1.default)({ headers: req.headers });
+    const projectName = project.title;
     let fileAdded = false;
     bb.on("file", (name, file, info) => __awaiter(void 0, void 0, void 0, function* () {
         const { filename, mimeType } = info;
