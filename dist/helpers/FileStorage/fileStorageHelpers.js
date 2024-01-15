@@ -86,7 +86,6 @@ const deleteFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, func
     }
 });
 exports.deleteFileFromDrive = deleteFileFromDrive;
-// TODO
 const downloadFileFromDrive = (fileName) => __awaiter(void 0, void 0, void 0, function* () {
     const authClient = yield authorize();
     const drive = googleapis_1.google.drive({ version: "v3", auth: authClient });

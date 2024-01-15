@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { error, info } from "../logger";
 import { Readable } from "stream";
+import fs from "fs";
 
 const SCOPE = ["https://www.googleapis.com/auth/drive"];
 
@@ -97,7 +98,6 @@ export const deleteFileFromDrive = async (fileName: string) => {
   }
 };
 
-// TODO
 export const downloadFileFromDrive = async (fileName: string) => {
   const authClient = await authorize();
   const drive = google.drive({ version: "v3", auth: authClient });

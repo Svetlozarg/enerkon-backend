@@ -8,6 +8,7 @@ import { updateProjectLog } from "../helpers/logHelpers";
 import { Types } from "mongoose";
 import {
   deleteFileFromDrive,
+  downloadFileFromDrive,
   getDocumentPreviewLink,
   uploadFileToGoogleDrive,
 } from "../helpers/FileStorage/fileStorageHelpers";
@@ -239,7 +240,18 @@ export const deleteDocument = asyncHandler(
 //?@route GET /api/document/download/:fileName
 //@access private
 export const downloadDocument = asyncHandler(
-  async (req: Request, res: Response) => {}
+  async (req: Request, res: Response) => {
+    const fileName = req.params.fileName;
+
+    const downloadedFile = await downloadFileFromDrive(fileName);
+
+    res.setHeader(
+      "Content-Disposition",
+      `attachment; filename="${encodeURIComponent(fileName)}"`
+    );
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.send(downloadedFile);
+  }
 );
 
 //@desc Get document link to google drive

@@ -7,6 +7,7 @@ import {
   updateDocument,
   deleteDocument,
   getPreviewLink,
+  downloadDocument,
 } from "../controllers/document.controller";
 
 const router = express.Router();
@@ -17,5 +18,6 @@ router.post("/create/:owner/:projectId", validateToken, createDocument);
 router.put("/update/:id", validateToken, updateDocument);
 router.delete("/delete", validateToken, deleteDocument);
 router.get("/preview/:fileName", validateToken, getPreviewLink);
+router.get("/download/:fileName", validateToken, downloadDocument);
 
 export default router;

@@ -13,5 +13,6 @@ router.post("/create/:owner/:projectId", validateTokenHandler_1.validateToken, d
 router.put("/update/:id", validateTokenHandler_1.validateToken, document_controller_1.updateDocument);
 router.delete("/delete", validateTokenHandler_1.validateToken, document_controller_1.deleteDocument);
 router.get("/preview/:fileName", validateTokenHandler_1.validateToken, document_controller_1.getPreviewLink);
+router.get("/download/:fileName", validateTokenHandler_1.validateToken, document_controller_1.downloadDocument);
 exports.default = router;
 //# sourceMappingURL=document.routes.js.map

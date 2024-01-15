@@ -179,7 +179,13 @@ exports.deleteDocument = (0, express_async_handler_1.default)((req, res) => __aw
 //@desc Download a document
 //?@route GET /api/document/download/:fileName
 //@access private
-exports.downloadDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () { }));
+exports.downloadDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const fileName = req.params.fileName;
+    const downloadedFile = yield (0, fileStorageHelpers_1.downloadFileFromDrive)(fileName);
+    res.setHeader("Content-Disposition", `attachment; filename="${encodeURIComponent(fileName)}"`);
+    res.setHeader("Content-Type", "application/octet-stream");
+    res.send(downloadedFile);
+}));
 //@desc Get document link to google drive
 //?@route GET /api/document/preview/:fileName
 //@access private
