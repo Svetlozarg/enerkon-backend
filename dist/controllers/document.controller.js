@@ -92,7 +92,7 @@ exports.createDocument = (0, express_async_handler_1.default)((req, res) => __aw
             const formattedFileName = filename === "Project.xml" || filename === "Master_file.xlsx"
                 ? `${projectName}-${filename}`
                 : filename;
-            yield (0, fileStorageHelpers_1.uploadFileToGoogleDrive)(filename, mimeType, file);
+            yield (0, fileStorageHelpers_1.uploadFileToGoogleDrive)(formattedFileName, mimeType, file);
             (0, logHelpers_1.updateProjectLog)(new mongoose_1.Types.ObjectId(projectId), savedDocument.title, "Файлът е създаден", savedDocument.updatedAt);
             (0, logger_1.info)(`Document ${filename} created successfully`);
             res.status(200).json({ success: true, data: savedDocument });

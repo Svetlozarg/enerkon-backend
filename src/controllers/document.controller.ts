@@ -107,7 +107,7 @@ export const createDocument = asyncHandler(
             ? `${projectName}-${filename}`
             : filename;
 
-        await uploadFileToGoogleDrive(filename, mimeType, file);
+        await uploadFileToGoogleDrive(formattedFileName, mimeType, file);
 
         updateProjectLog(
           new Types.ObjectId(projectId),
