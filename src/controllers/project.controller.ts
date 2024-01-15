@@ -97,10 +97,10 @@ export const getProjectsAnalytics = asyncHandler(
             year: { $year: "$createdAt" },
           },
           paidCount: {
-            $sum: { $cond: [{ $eq: ["$status", "Paid"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$status", "paid"] }, 1, 0] },
           },
           unpaidCount: {
-            $sum: { $cond: [{ $eq: ["$status", "Unpaid"] }, 1, 0] },
+            $sum: { $cond: [{ $eq: ["$status", "unpaid"] }, 1, 0] },
           },
         },
       },
