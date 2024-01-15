@@ -179,7 +179,7 @@ exports.deleteProject = (0, express_async_handler_1.default)((req, res) => __awa
         (0, logger_1.error)("Project not found and cannot be deleted");
         throw new Error("Project not found");
     }
-    yield project_model_1.default.deleteMany({ projectId: id });
+    yield document_model_1.default.deleteMany({ projectId: id });
     (0, logHelpers_1.deleteProjectLog)(id);
     (0, logger_1.info)("Project deleted successfully");
     res.json({

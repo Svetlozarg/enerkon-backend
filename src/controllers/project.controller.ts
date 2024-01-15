@@ -223,7 +223,7 @@ export const deleteProject = asyncHandler(
       throw new Error("Project not found");
     }
 
-    await Project.deleteMany({ projectId: id });
+    await Document.deleteMany({ projectId: id });
 
     deleteProjectLog(id);
 
