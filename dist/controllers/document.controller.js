@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPreviewLink = exports.downloadDocument = exports.deleteDocument = exports.updateDocument = exports.createDocument = exports.getDocumentById = exports.getAllDocuments = void 0;
+exports.generateKCCDocument = exports.getPreviewLink = exports.downloadDocument = exports.deleteDocument = exports.updateDocument = exports.createDocument = exports.getDocumentById = exports.getAllDocuments = void 0;
 const express_async_handler_1 = __importDefault(require("express-async-handler"));
 const document_model_1 = __importDefault(require("../models/document.model"));
 const project_model_1 = __importDefault(require("../models/project.model"));
@@ -21,6 +21,7 @@ const logger_1 = require("../helpers/logger");
 const logHelpers_1 = require("../helpers/logHelpers");
 const mongoose_1 = require("mongoose");
 const fileStorageHelpers_1 = require("../helpers/FileStorage/fileStorageHelpers");
+const createKCCDocument_1 = require("../helpers/Documents/createKCCDocument");
 //@desc Get all documents
 //?@route GET /api/document/:owner/documents
 //@access private
@@ -201,6 +202,21 @@ exports.getPreviewLink = (0, express_async_handler_1.default)((req, res) => __aw
     res.status(200).json({
         success: true,
         data: previewLink,
+    });
+}));
+//@desc Create KCC document
+//!@route POST /api/document/generate/kcc
+//@access private
+exports.generateKCCDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { projectName, projectId, owner } = req.body;
+    const kccDocument = (0, createKCCDocument_1.createKCCDocument)(projectName, projectId, owner);
+    if (!kccDocument) {
+        res.status(500);
+        (0, logger_1.error)("Failed to create KCC document");
+        throw new Error("Failed to create KCC document");
+    }
+    res.status(200).json({
+        success: true,
     });
 }));
 //# sourceMappingURL=document.controller.js.map

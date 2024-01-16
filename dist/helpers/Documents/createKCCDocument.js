@@ -19,9 +19,9 @@ const logHelpers_1 = require("../logHelpers");
 const logger_1 = require("../logger");
 const document_model_1 = __importDefault(require("../../models/document.model"));
 const constants_1 = require("../constants");
-const createKCCDocument = (xmlDocumentName, projectName, projectId, owner) => __awaiter(void 0, void 0, void 0, function* () {
+const createKCCDocument = (projectName, projectId, owner) => __awaiter(void 0, void 0, void 0, function* () {
     (0, logger_1.warning)("Creating KCC document...");
-    const xmlData = (yield (0, fileHelpers_1.convertXmlToObject)(xmlDocumentName));
+    const xmlData = (yield (0, fileHelpers_1.convertXmlToObject)(projectName + "-Project.xml"));
     if (xmlData) {
         (0, logger_1.warning)("XML data retrieved successfully.");
         const kkcExcelData = {

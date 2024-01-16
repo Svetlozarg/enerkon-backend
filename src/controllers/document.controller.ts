@@ -272,3 +272,24 @@ export const getPreviewLink = asyncHandler(
     });
   }
 );
+
+//@desc Create KCC document
+//!@route POST /api/document/generate/kcc
+//@access private
+export const generateKCCDocument = asyncHandler(
+  async (req: Request, res: Response) => {
+    const { projectName, projectId, owner } = req.body;
+
+    const kccDocument = createKCCDocument(projectName, projectId, owner);
+
+    if (!kccDocument) {
+      res.status(500);
+      error("Failed to create KCC document");
+      throw new Error("Failed to create KCC document");
+    }
+
+    res.status(200).json({
+      success: true,
+    });
+  }
+);

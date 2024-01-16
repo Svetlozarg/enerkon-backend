@@ -8,6 +8,7 @@ import {
   deleteDocument,
   getPreviewLink,
   downloadDocument,
+  generateKCCDocument,
 } from "../controllers/document.controller";
 
 const router = express.Router();
@@ -19,5 +20,6 @@ router.put("/update/:id", validateToken, updateDocument);
 router.delete("/delete", validateToken, deleteDocument);
 router.get("/preview/:fileName", validateToken, getPreviewLink);
 router.get("/download/:fileName", validateToken, downloadDocument);
+router.post("/generate/kcc", validateToken, generateKCCDocument);
 
 export default router;

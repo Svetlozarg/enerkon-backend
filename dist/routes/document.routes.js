@@ -14,5 +14,6 @@ router.put("/update/:id", validateTokenHandler_1.validateToken, document_control
 router.delete("/delete", validateTokenHandler_1.validateToken, document_controller_1.deleteDocument);
 router.get("/preview/:fileName", validateTokenHandler_1.validateToken, document_controller_1.getPreviewLink);
 router.get("/download/:fileName", validateTokenHandler_1.validateToken, document_controller_1.downloadDocument);
+router.post("/generate/kcc", validateTokenHandler_1.validateToken, document_controller_1.generateKCCDocument);
 exports.default = router;
 //# sourceMappingURL=document.routes.js.map

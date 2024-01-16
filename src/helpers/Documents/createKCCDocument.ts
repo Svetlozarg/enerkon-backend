@@ -11,7 +11,6 @@ import Document from "../../models/document.model";
 import { getCurrentData } from "../constants";
 
 export const createKCCDocument = async (
-  xmlDocumentName: string,
   projectName: string,
   projectId: string,
   owner: string
@@ -19,7 +18,7 @@ export const createKCCDocument = async (
   warning("Creating KCC document...");
 
   const xmlData: ProjectXML = (await convertXmlToObject(
-    xmlDocumentName
+    projectName + "-Project.xml"
   )) as ProjectXML;
 
   if (xmlData) {
