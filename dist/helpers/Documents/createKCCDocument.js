@@ -61,7 +61,10 @@ const createKCCDocument = (projectName, projectId, owner) => __awaiter(void 0, v
         });
         const createdDocument = yield newDocument.save();
         (0, logHelpers_1.updateProjectLog)(new mongoose_1.Types.ObjectId(projectId), createdDocument.title, "Файлът е създаден", createdDocument.updatedAt);
-        (0, logger_1.info)("KCC document created successfully.");
+        if (createdDocument) {
+            (0, logger_1.info)("KCC document created successfully.");
+            return createdDocument;
+        }
     }
     else {
         (0, logger_1.error)("Failed to retrieve XML data.");

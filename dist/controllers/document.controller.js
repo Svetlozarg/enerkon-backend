@@ -223,6 +223,7 @@ exports.generateKCCDocument = (0, express_async_handler_1.default)((req, res) =>
     }
     res.status(200).json({
         success: true,
+        data: { kccDocument },
     });
 }));
 //# sourceMappingURL=document.controller.js.map

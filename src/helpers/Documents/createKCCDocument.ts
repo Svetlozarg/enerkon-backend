@@ -81,7 +81,11 @@ export const createKCCDocument = async (
       createdDocument.updatedAt
     );
 
-    info("KCC document created successfully.");
+    if (createdDocument) {
+      info("KCC document created successfully.");
+
+      return createdDocument;
+    }
   } else {
     error("Failed to retrieve XML data.");
   }
