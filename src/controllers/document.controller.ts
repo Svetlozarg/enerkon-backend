@@ -280,6 +280,14 @@ export const generateKCCDocument = asyncHandler(
   async (req: Request, res: Response) => {
     const { projectName, projectId, owner } = req.body;
 
+    const project = await Project.findById(projectId);
+
+    if (!project) {
+      res.status(404);
+      error("Project not found");
+      throw new Error("Project not found");
+    }
+
     const kccDocument = createKCCDocument(projectName, projectId, owner);
 
     if (!kccDocument) {

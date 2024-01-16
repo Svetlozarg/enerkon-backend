@@ -209,6 +209,12 @@ exports.getPreviewLink = (0, express_async_handler_1.default)((req, res) => __aw
 //@access private
 exports.generateKCCDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { projectName, projectId, owner } = req.body;
+    const project = yield project_model_1.default.findById(projectId);
+    if (!project) {
+        res.status(404);
+        (0, logger_1.error)("Project not found");
+        throw new Error("Project not found");
+    }
     const kccDocument = (0, createKCCDocument_1.createKCCDocument)(projectName, projectId, owner);
     if (!kccDocument) {
         res.status(500);
