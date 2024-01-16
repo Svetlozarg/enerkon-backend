@@ -220,14 +220,11 @@ export const deleteDocument = asyncHandler(
 
     deleteFileFromDrive(formattedFileName);
 
+    const project = await Project.findOne({ title: projectName });
+
     loggerInfo(`Document ${fileName} deleted successfully`);
 
-    updateProjectLog(
-      new Types.ObjectId(id),
-      fileName,
-      "Файлът е изтрит",
-      new Date()
-    );
+    updateProjectLog(project._id, fileName, "Файлът е изтрит", new Date());
 
     res.json({
       success: true,
