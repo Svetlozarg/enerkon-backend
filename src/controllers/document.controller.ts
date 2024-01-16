@@ -288,17 +288,11 @@ export const generateKCCDocument = asyncHandler(
       throw new Error("Project not found");
     }
 
-    const kccDocument = createKCCDocument(projectName, projectId, owner);
-
-    if (!kccDocument) {
-      res.status(500);
-      error("Failed to create KCC document");
-      throw new Error("Failed to create KCC document");
-    }
+    const kccDocument = await createKCCDocument(projectName, projectId, owner);
 
     res.status(200).json({
       success: true,
-      data: { kccDocument },
+      data: kccDocument,
     });
   }
 );

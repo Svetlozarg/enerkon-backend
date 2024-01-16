@@ -215,15 +215,10 @@ exports.generateKCCDocument = (0, express_async_handler_1.default)((req, res) =>
         (0, logger_1.error)("Project not found");
         throw new Error("Project not found");
     }
-    const kccDocument = (0, createKCCDocument_1.createKCCDocument)(projectName, projectId, owner);
-    if (!kccDocument) {
-        res.status(500);
-        (0, logger_1.error)("Failed to create KCC document");
-        throw new Error("Failed to create KCC document");
-    }
+    const kccDocument = yield (0, createKCCDocument_1.createKCCDocument)(projectName, projectId, owner);
     res.status(200).json({
         success: true,
-        data: { kccDocument },
+        data: kccDocument,
     });
 }));
 //# sourceMappingURL=document.controller.js.map
