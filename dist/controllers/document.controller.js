@@ -182,9 +182,14 @@ exports.deleteDocument = (0, express_async_handler_1.default)((req, res) => __aw
 exports.downloadDocument = (0, express_async_handler_1.default)((req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const fileName = req.params.fileName;
     const downloadedFile = yield (0, fileStorageHelpers_1.downloadFileFromDrive)(fileName);
-    res.setHeader("Content-Disposition", `attachment; filename="${encodeURIComponent(fileName)}"`);
+    const sanitizedFileName = encodeURIComponent(fileName);
+    res.setHeader("Content-Disposition", `attachment; filename=${sanitizedFileName}`);
     res.setHeader("Content-Type", "application/octet-stream");
-    res.send(downloadedFile);
+    downloadedFile.pipe(res);
+    downloadedFile.on("error", (err) => {
+        console.error(err);
+        res.status(500).send("Internal Server Error");
+    });
 }));
 //@desc Get document link to google drive
 //?@route GET /api/document/preview/:fileName

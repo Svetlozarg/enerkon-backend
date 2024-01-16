@@ -245,12 +245,20 @@ export const downloadDocument = asyncHandler(
 
     const downloadedFile = await downloadFileFromDrive(fileName);
 
+    const sanitizedFileName = encodeURIComponent(fileName);
+
     res.setHeader(
       "Content-Disposition",
-      `attachment; filename="${encodeURIComponent(fileName)}"`
+      `attachment; filename=${sanitizedFileName}`
     );
     res.setHeader("Content-Type", "application/octet-stream");
-    res.send(downloadedFile);
+
+    downloadedFile.pipe(res);
+
+    downloadedFile.on("error", (err) => {
+      console.error(err);
+      res.status(500).send("Internal Server Error");
+    });
   }
 );
 
